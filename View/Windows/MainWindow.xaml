@@ -1,0 +1,99 @@
+﻿<Window x:Class="MatrixGameSolver.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MatrixGameSolver"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="450" Width="800"
+        DataContext="{Binding MainWindowViewModel, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <Style TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+            <Setter Property="AlternatingRowBackground" Value="Aquamarine"/>
+            <Setter Property="VerticalGridLinesBrush" Value="BlueViolet"/>
+            <Setter Property="GridLinesVisibility" Value="Vertical"/>
+        </Style>
+    </Window.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File"/>
+            <MenuItem Header="Help"/>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem Content="{Binding Status}"/>
+        </StatusBar>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0" Header="Ввод данных">
+                <DockPanel>
+                    <TextBlock Text="Ниже введите платежную матрицу" DockPanel.Dock="Top"/>
+                    <TextBox TextWrapping="Wrap" AcceptsReturn="True" MinWidth="350" Text="{Binding PaymentMatrix, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Grid Margin="5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" VerticalAlignment="Center">
+                            <TextBlock Text="Точность решения"/>
+                            <TextBox Width="100" Margin="15,0" Text="{Binding Precision, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
+                            <TextBlock Text="Максимальное число итераций (необязательно)"/>
+                            <TextBox Width="100" Margin="15,0" Text="{Binding MaxStepsCount, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <Button Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Решить"
+                                Margin="5,0" Width="100" Command="{Binding GetSolutionCommand}"/>
+                    </Grid>
+                </DockPanel>
+            </GroupBox>
+            <GroupBox Grid.Row="1" Header="Решение">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <DockPanel Grid.Column="0" Margin="5,0">
+                        <TextBlock DockPanel.Dock="Top" Text="Вероятности стратегий игрока А" Margin="0,5" HorizontalAlignment="Center"/>
+                        <DataGrid ItemsSource="{Binding TableA}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Наименование стратегии" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Вероятность" Width="*" Binding="{Binding Probability}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                    <DockPanel Grid.Column="1" Margin="5,0">
+                        <TextBlock DockPanel.Dock="Top" Text="Вероятности стратегий игрока B" Margin="0,5" HorizontalAlignment="Center"/>
+                        <DataGrid ItemsSource="{Binding TableB}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Наименование стратегии" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Вероятность" Width="*" Binding="{Binding Probability}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                    <DockPanel Grid.Column="2" Margin="5,0">
+                        <TextBlock DockPanel.Dock="Top" Text="Другие данные" Margin="0,5" HorizontalAlignment="Center"/>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Цена игры ="/>
+                                <TextBlock Margin="5,0" Text="{Binding GamePrice}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Число итераций ="/>
+                                <TextBlock Margin="5,0" Text="{Binding StepsCount}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </DockPanel>
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </DockPanel>
+</Window>
