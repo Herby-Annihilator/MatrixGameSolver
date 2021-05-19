@@ -29,13 +29,12 @@ namespace MatrixGameSolver.Model
 			int[] playerBStrategiesUsed = new int[_matrix[0].Length];
 			double[] accumulatedLossOfPlayerB = new double[_matrix.GetLength(0)]; // проигрыши игрока В при конкретной стратегии, размерность - число строк в матрице (стратки А)
 
-			double currentGamePrice = double.MaxValue, minGamePrice = 0, maxGamePrice = 0;
-			double nextGamePrice = 0;
+			double minGamePrice = 0, maxGamePrice = 0;
+			double currentGamePrice = double.MaxValue;
 
 			while (!IsPrecisionAchieved(minGamePrice, maxGamePrice, currentGamePrice) && (currentIteration < _maxStepsCount))
 			{
 				currentIteration++;
-				currentGamePrice = nextGamePrice;
 
 				playerAStrategiesUsed[currentAStrategy]++;
 				accumulatedWinningsOfPlayerA.AddSpecifiedRow(_matrix[currentAStrategy]);
@@ -51,10 +50,10 @@ namespace MatrixGameSolver.Model
 				minGamePrice /= currentIteration;
 				maxGamePrice /= currentIteration;
 
-				nextGamePrice = (minGamePrice + maxGamePrice) / 2;
+				currentGamePrice = (minGamePrice + maxGamePrice) / 2;
 			}
 
-			IterativeMethodAnswer answer = new IterativeMethodAnswer(currentIteration, nextGamePrice);
+			IterativeMethodAnswer answer = new IterativeMethodAnswer(currentIteration, currentGamePrice);
 			for (int i = 0; i < playerAStrategiesUsed.Length; i++)
 			{
 				answer.LikelihoodsA.Add(new StrategyLikelihood($"A{i + 1}", ((double)playerAStrategiesUsed[i]) / currentIteration));
@@ -66,7 +65,7 @@ namespace MatrixGameSolver.Model
 			return answer;
 		}
 
-		private bool IsPrecisionAchieved(double minGamePrice, double maxGamePrice, double currentGamePrice) => Math.Abs(currentGamePrice - minGamePrice) <= _precision && Math.Abs(maxGamePrice - currentGamePrice) <= _precision;
+		private bool IsPrecisionAchieved(double minGamePrice, double maxGamePrice, double currentGamePrice) => ((currentGamePrice - minGamePrice) <= _precision) && ((maxGamePrice - currentGamePrice) <= _precision);
 		private int FindRowWithMaxElement()
 		{
 			int index = 0;
